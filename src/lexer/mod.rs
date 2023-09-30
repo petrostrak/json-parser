@@ -34,4 +34,11 @@ impl Lexer {
         self.position = self.read_position;
         self.read_position = self.read_position + 1;
     }
+
+    pub fn skip_whitespace(&mut self) {
+        let ch = self.ch;
+        if ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r' {
+            self.read_char();
+        }
+    }
 }
