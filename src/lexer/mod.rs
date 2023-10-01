@@ -18,7 +18,7 @@ fn is_digit(ch: char) -> bool {
 impl Lexer {
     pub fn new(input: Vec<char>) -> Self {
         Self {
-            input: input,
+            input,
             position: 0,
             read_position: 0,
             ch: '0',
