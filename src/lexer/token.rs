@@ -15,11 +15,11 @@ pub enum Token {
     FALSE,
 }
 
-pub fn get_keyword_token(ident: &Vec<char>) -> Token {
+pub fn get_keyword_token(ident: &Vec<char>) -> Result<Token, String> {
     let identifier = ident.into_iter().collect::<String>();
     match &identifier[..] {
-        "true" => Token::TRUE,
-        "false" => Token::FALSE,
-        _ => Token::ILLEGAL,
+        "true" => Ok(Token::TRUE),
+        "false" => Ok(Token::FALSE),
+        _ => Err(String::from("Not a keyword")),
     }
 }
