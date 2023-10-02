@@ -1,7 +1,7 @@
 mod lexer;
 
 fn main() {
-    let json = String::from("{\"name\": \"Petros\", \"age\": 37}");
+    let json = String::from("{\"name\": \"Petros\", \"age\": 37, \"married\": false}");
 
     let mut l = lexer::Lexer::new(json.chars().collect());
     l.read_char();
