@@ -3,7 +3,7 @@ pub enum Token {
     ILLEGAL,
     EOF,
     INT(Vec<char>),
-    IDENT(Vec<char>),
+    IDENT(String),
     COLON(char),
     COMMA(char),
     LBRACE(char),
@@ -15,9 +15,8 @@ pub enum Token {
     FALSE,
 }
 
-pub fn get_keyword_token(ident: &Vec<char>) -> Result<Token, String> {
-    let identifier = ident.into_iter().collect::<String>();
-    match &identifier[..] {
+pub fn get_keyword_token(ident: &str) -> Result<Token, String> {
+    match ident {
         "true" => Ok(Token::TRUE),
         "false" => Ok(Token::FALSE),
         _ => Err(String::from("Not a keyword")),

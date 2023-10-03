@@ -43,12 +43,14 @@ impl Lexer {
     }
 
     pub fn next_token(&mut self) -> token::Token {
-        let read_identifier = |l: &mut Lexer| -> Vec<char> {
+        let read_identifier = |l: &mut Lexer| -> String {
             let position = l.position;
             while l.position < l.input.len() && is_letter(l.ch) {
                 l.read_char();
             }
-            l.input[position..l.position].to_vec()
+            l.input[position..l.position]
+                .into_iter()
+                .collect::<String>()
         };
 
         let read_number = |l: &mut Lexer| -> Vec<char> {
@@ -88,7 +90,7 @@ impl Lexer {
             }
             _ => {
                 if is_letter(self.ch) {
-                    let ident: Vec<char> = read_identifier(self);
+                    let ident = read_identifier(self);
                     match token::get_keyword_token(&ident) {
                         Ok(keywork_token) => {
                             return keywork_token;
