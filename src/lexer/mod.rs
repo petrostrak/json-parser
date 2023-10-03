@@ -53,12 +53,16 @@ impl Lexer {
                 .collect::<String>()
         };
 
-        let read_number = |l: &mut Lexer| -> Vec<char> {
+        let read_number = |l: &mut Lexer| -> u32 {
             let position = l.position;
             while l.position < l.input.len() && is_digit(l.ch) {
                 l.read_char();
             }
-            l.input[position..l.position].to_vec()
+            l.input[position..l.position]
+                .into_iter()
+                .collect::<String>()
+                .parse::<u32>()
+                .expect("could not parse INT")
         };
 
         let tok: token::Token;
@@ -100,7 +104,7 @@ impl Lexer {
                         }
                     }
                 } else if is_digit(self.ch) {
-                    let ident: Vec<char> = read_number(self);
+                    let ident = read_number(self);
                     return token::Token::INT(ident);
                 } else {
                     return token::Token::ILLEGAL;

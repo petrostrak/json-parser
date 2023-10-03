@@ -2,7 +2,7 @@
 pub enum Token {
     ILLEGAL,
     EOF,
-    INT(Vec<char>),
+    INT(u32),
     IDENT(String),
     COLON(char),
     COMMA(char),
