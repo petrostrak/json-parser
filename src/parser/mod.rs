@@ -1,13 +1,26 @@
+use std::{collections::HashMap, str::Chars, iter::Peekable};
+
 use crate::lexer::token::Token;
 
-pub fn parse_vec(tokens: Vec<Token>) {
-    todo!()
+pub struct LogParser {
+    tokens: Vec<Token>,
+    kv: HashMap<String, String>
 }
 
-pub fn parse_object(tokens: Vec<Token>) {
-    todo!()
-}
+impl LogParser {
+    pub fn parse(tokens: Vec<Token>) -> Result<HashMap<String, String>> {
+        let mut parser = LogParser {
+            tokens,
+            kv: Vec::new(),
+        };
 
-pub fn parse(tokens: Vec<Token>) {
-    todo!()
+        for token in tokens {}
+
+        Ok(parser.kv)
+    }
+
+    fn parse_token(&mut self, token: &mut Peekable<Chars>) -> Result<()> {
+        
+        Ok(())
+    }
 }
