@@ -1,9 +1,11 @@
 use crate::lexer::token::Token;
+use anyhow::Result;
+use parser::LogParser;
 
 mod lexer;
 mod parser;
 
-fn main() {
+fn main() -> Result<()> {
     let json = String::from("{\"name\": \"Petros\", \"age\": 37, \"married\": false}");
 
     let mut l = lexer::Lexer::new(json.chars().collect());
@@ -19,7 +21,8 @@ fn main() {
         }
     }
 
-    for token in tokens {
-        println!("{:?}", token.to_string());
-    }
+    let kv = LogParser::parse(tokens)?;
+    println!("{:?}", kv);
+
+    Ok(())
 }
