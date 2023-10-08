@@ -80,6 +80,23 @@ impl LogParser {
     }
 
     fn parse_kv_for_value(&mut self, key: String, token: &mut Peekable<Chars>) -> Result<()> {
-        todo!()
+        let mut value = String::new();
+        loop {
+            match token.peek() {
+                Some('a'..='z') => {
+                    value.push(token.next().unwrap());
+                }
+                Some(ch) => {
+                    return Err(anyhow!("unexpected character '{}' in value", ch));
+                }
+                None => {
+                    break;
+                }
+            }
+        }
+
+        self.kv.insert(key, value);
+
+        Ok(())
     }
 }
