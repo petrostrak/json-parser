@@ -23,6 +23,38 @@ impl LogParser {
     }
 
     fn parse_token(&mut self, token: &mut Peekable<Chars>) -> Result<()> {
+        match token.peek() {
+            Some(':') => {
+                token.next();
+                self.parse_ident(token)?;
+            }
+            Some(_) => {
+                self.parse_kv_for_key(token)?;
+            }
+            None => {}
+        }
         Ok(())
+    }
+
+    fn parse_ident(&mut self, token: &mut Peekable<Chars>) -> Result<()> {
+        let mut ident = String::new();
+
+        loop {
+            match token.peek() {
+                Some(' ') => {
+                    token.next();
+                    break;
+                }
+                None => {
+                    break;
+                }
+                _ => ident.push(token.next().unwrap()),
+            }
+        }
+        Ok(())
+    }
+
+    fn parse_kv_for_key(&mut self, token: &mut Peekable<Chars>) -> Result<()> {
+        todo!()
     }
 }
