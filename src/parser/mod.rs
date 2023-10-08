@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use std::{collections::HashMap, iter::Peekable, str::Chars};
 
 use crate::lexer::token::Token;
@@ -55,6 +55,31 @@ impl LogParser {
     }
 
     fn parse_kv_for_key(&mut self, token: &mut Peekable<Chars>) -> Result<()> {
+        let mut key = String::new();
+        loop {
+            match token.peek() {
+                Some('a'..='z') => {
+                    key.push(token.next().unwrap());
+                }
+                Some('=') => {
+                    token.next();
+                    break;
+                }
+                Some(ch) => {
+                    return Err(anyhow!("unexpected character '{}; in key value", ch));
+                }
+                None => {
+                    return Err(anyhow!("key should be followed by '=' and a value"));
+                }
+            }
+        }
+
+        self.parse_kv_for_value(key, token)?;
+
+        Ok(())
+    }
+
+    fn parse_kv_for_value(&mut self, key: String, token: &mut Peekable<Chars>) -> Result<()> {
         todo!()
     }
 }
