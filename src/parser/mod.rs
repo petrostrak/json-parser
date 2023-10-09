@@ -66,7 +66,7 @@ impl LogParser {
                     break;
                 }
                 Some(ch) => {
-                    return Err(anyhow!("unexpected character '{}; in key value", ch));
+                    return Err(anyhow!("unexpected character '{}' in key value", ch));
                 }
                 None => {
                     return Err(anyhow!("key should be followed by '=' and a value"));
