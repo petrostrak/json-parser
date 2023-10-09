@@ -1,7 +1,7 @@
 use crate::lexer::token::Token;
 use anyhow::Result;
 use lexer::token::Tokens;
-use parser::LogParser;
+// use parser::LogParser;
 
 mod lexer;
 mod parser;

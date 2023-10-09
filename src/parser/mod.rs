@@ -1,76 +1,86 @@
-use anyhow::{anyhow, Result};
-use std::{collections::HashMap, iter::Peekable, str::Chars};
+use anyhow::{anyhow, Ok, Result};
+use std::{collections::HashMap, iter::Peekable};
 
-use crate::lexer::token::Token;
+use crate::lexer::token::{Token, Tokens};
 
 pub struct LogParser {
-    tokens: Vec<Token>,
+    tokens: Tokens,
     kv: HashMap<String, String>,
 }
 
 impl LogParser {
-    pub fn parse(tokens: Vec<Token>) -> Result<HashMap<String, String>> {
+    pub fn parse(tokens: Tokens) -> Result<HashMap<String, String>> {
         let mut parser = LogParser {
             tokens,
             kv: HashMap::new(),
         };
 
         while let Some(token) = parser.tokens.iter().next() {
-            parser.parse_token(&mut token.to_string().chars().peekable())?;
+            parser.parse_token(&mut tokens.peekable())?;
         }
 
         Ok(parser.kv)
     }
 
-    fn parse_token(&mut self, token: &mut Peekable<Chars>) -> Result<()> {
+    // parse_token takes the json as a list of tokens and validates them.
+    fn parse_token(&mut self, token: &mut Peekable<Tokens>) -> Result<()> {
         match token.peek() {
-            Some(':') => {
+            Some(Token::LBRACE(_)) => {
+                token.next();
+                self.parse_object(token)?;
+            }
+            _ => return Err(anyhow!("missing '{{' at the beginning of json")),
+        }
+        Ok(())
+    }
+
+    // parse_object takes an object and validates it.
+    // e.g. "name": "Peter"
+    fn parse_object(&mut self, token: &mut Peekable<Tokens>) -> Result<()> {
+        match token.peek() {
+            Some(Token::QUOTATION(_)) => {
                 token.next();
                 self.parse_ident(token)?;
             }
-            Some(_) => {
-                self.parse_kv_for_key(token)?;
+            _ => return Err(anyhow!("missing '\"' at the beginning of json")),
+        }
+
+        Ok(())
+    }
+
+    // parse_ident pushes the value the IDENT() holds into the kv hash table and
+    // also checks it the next token is QUOTATION().
+    fn parse_ident(&mut self, token: &mut Peekable<Tokens>) -> Result<()> {
+        match token.peek() {
+            Some(Token::IDENT(_)) => {
+                token.next();
+                if token.peek() != Some(&Token::QUOTATION('"')) {
+                    return Err(anyhow!("Identifier must end with QUOTATION"));
+                }
             }
-            None => {}
+            _ => {}
         }
         Ok(())
     }
 
-    fn parse_ident(&mut self, token: &mut Peekable<Chars>) -> Result<()> {
-        let mut ident = String::new();
-
-        loop {
-            match token.peek() {
-                Some(' ') => {
-                    token.next();
-                    break;
-                }
-                None => {
-                    break;
-                }
-                _ => ident.push(token.next().unwrap()),
-            }
-        }
-        Ok(())
-    }
-
-    fn parse_kv_for_key(&mut self, token: &mut Peekable<Chars>) -> Result<()> {
+    fn parse_kv_for_key(&mut self, token: &mut Peekable<Tokens>) -> Result<()> {
         let mut key = String::new();
         loop {
             match token.peek() {
-                Some('a'..='z') => {
-                    key.push(token.next().unwrap());
+                Some(Token::IDENT(text)) => {
+                    key.push_str(text);
                 }
-                Some('=') => {
+                Some(Token::COLON(_)) => {
                     token.next();
                     break;
                 }
-                Some(ch) => {
-                    return Err(anyhow!("unexpected character '{}' in key value", ch));
+                Some(Token::ILLEGAL) => {
+                    return Err(anyhow!("unexpected character in key value",));
                 }
                 None => {
-                    return Err(anyhow!("key should be followed by '=' and a value"));
+                    return Err(anyhow!("key should be followed by ':' and a value"));
                 }
+                _ => todo!(),
             }
         }
 
@@ -79,12 +89,12 @@ impl LogParser {
         Ok(())
     }
 
-    fn parse_kv_for_value(&mut self, key: String, token: &mut Peekable<Chars>) -> Result<()> {
+    fn parse_kv_for_value(&mut self, key: String, token: &mut Peekable<Tokens>) -> Result<()> {
         let mut value = String::new();
         loop {
             match token.peek() {
-                Some('a'..='z') => {
-                    value.push(token.next().unwrap());
+                Some(Token::IDENT(text)) => {
+                    value.push_str(text);
                 }
                 Some(ch) => {
                     return Err(anyhow!("unexpected character '{}' in value", ch));
