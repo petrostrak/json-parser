@@ -17,6 +17,59 @@ pub enum Token {
     FALSE,
 }
 
+pub struct Tokens {
+    pub list: Vec<Token>,
+    index: usize,
+}
+
+impl Tokens {
+    pub fn new(tokens: Vec<Token>) -> Self {
+        Self {
+            list: tokens,
+            index: 0,
+        }
+    }
+
+    pub fn iter(&self) -> TokenIterator {
+        TokenIterator {
+            tokens: self,
+            index: 0,
+        }
+    }
+}
+
+impl Iterator for Tokens {
+    type Item = Token;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.index < self.list.len() {
+            let result = Some(&self.list[self.index]);
+            self.index += 1;
+            result.cloned()
+        } else {
+            None
+        }
+    }
+}
+
+pub struct TokenIterator<'a> {
+    tokens: &'a Tokens,
+    index: usize,
+}
+
+impl<'a> Iterator for TokenIterator<'a> {
+    type Item = &'a Token;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.index < self.tokens.list.len() {
+            let result = Some(&self.tokens.list[self.index]);
+            self.index += 1;
+            result
+        } else {
+            None
+        }
+    }
+}
+
 impl Display for Token {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {

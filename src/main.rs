@@ -1,5 +1,6 @@
 use crate::lexer::token::Token;
 use anyhow::Result;
+use lexer::token::Tokens;
 use parser::LogParser;
 
 mod lexer;
@@ -21,8 +22,13 @@ fn main() -> Result<()> {
         }
     }
 
-    let kv = LogParser::parse(tokens)?;
-    println!("{:?}", kv);
+    // let kv = LogParser::parse(tokens)?;
+    // println!("{:?}", kv);
+
+    let tokens = Tokens::new(tokens);
+    for token in tokens.iter() {
+        println!("{:?}", token);
+    }
 
     Ok(())
 }
