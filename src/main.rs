@@ -20,7 +20,9 @@ fn main() -> Result<()> {
         tokens.list.push(token);
     }
 
-    // let kv = LogParser::parse(tokens)?;
+    // let mut parser = LogParser::new(tokens.clone());
+
+    // let kv = parser.parse()?;
     // println!("{:?}", kv);
 
     let tokens = Tokens::new(tokens.list);

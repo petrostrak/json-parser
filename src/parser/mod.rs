@@ -9,17 +9,19 @@ pub struct LogParser {
 }
 
 impl LogParser {
-    pub fn parse(tokens: Tokens) -> Result<HashMap<String, String>> {
-        let mut parser = LogParser {
-            tokens: tokens.clone(),
+    pub fn new(tokens: Tokens) -> LogParser {
+        LogParser {
+            tokens,
             kv: HashMap::new(),
-        };
+        }
+    }
 
-        while let Some(_token) = parser.tokens.iter().next() {
-            parser.parse_token(&mut tokens.clone().peekable())?;
+    pub fn parse(&mut self) -> Result<HashMap<String, String>> {
+        while let Some(_token) = self.tokens.iter().next() {
+            self.parse_token(&mut self.tokens.clone().peekable())?;
         }
 
-        Ok(parser.kv)
+        Ok(self.kv.clone())
     }
 
     // parse_token takes the json as a list of tokens and validates them.
