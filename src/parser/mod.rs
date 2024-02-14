@@ -11,12 +11,12 @@ pub struct LogParser {
 impl LogParser {
     pub fn parse(tokens: Tokens) -> Result<HashMap<String, String>> {
         let mut parser = LogParser {
-            tokens,
+            tokens: tokens.clone(),
             kv: HashMap::new(),
         };
 
-        while let Some(token) = parser.tokens.iter().next() {
-            parser.parse_token(&mut tokens.peekable())?;
+        while let Some(_token) = parser.tokens.iter().next() {
+            parser.parse_token(&mut tokens.clone().peekable())?;
         }
 
         Ok(parser.kv)

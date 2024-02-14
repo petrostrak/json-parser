@@ -1,6 +1,5 @@
-use crate::lexer::token::Token;
+use crate::lexer::token::Tokens;
 use anyhow::Result;
-use lexer::token::Tokens;
 // use parser::LogParser;
 
 mod lexer;
@@ -12,20 +11,19 @@ fn main() -> Result<()> {
     let mut l = lexer::Lexer::new(json.chars().collect());
     l.read_char();
 
-    let mut tokens: Vec<Token> = Vec::new();
+    let mut tokens = Tokens::new(Vec::new());
     loop {
         let token = l.next_token();
         if token == lexer::token::Token::EOF {
             break;
-        } else {
-            tokens.push(token);
         }
+        tokens.list.push(token);
     }
 
     // let kv = LogParser::parse(tokens)?;
     // println!("{:?}", kv);
 
-    let tokens = Tokens::new(tokens);
+    let tokens = Tokens::new(tokens.list);
     for token in tokens.iter() {
         println!("{:?}", token);
     }

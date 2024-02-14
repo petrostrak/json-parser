@@ -17,6 +17,7 @@ pub enum Token {
     FALSE,
 }
 
+#[derive(Clone)]
 pub struct Tokens {
     pub list: Vec<Token>,
     index: usize,
