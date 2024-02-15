@@ -14,7 +14,7 @@ enum JsonValue {
 }
 
 impl<'a> LogParser<'a> {
-    pub fn new(json: &str) -> LogParser<'a> {
+    pub fn new(json: &'a str) -> LogParser<'a> {
         LogParser { json_str: json }
     }
 
@@ -120,4 +120,18 @@ fn parse_object(chars: &mut Peekable<std::str::Chars>) -> Option<JsonValue> {
     }
     consume(chars, "}")?;
     Some(JsonValue::Object(object))
+}
+
+fn parse_number(chars: &mut Peekable<std::str::Chars>) -> Option<JsonValue> {
+    let mut num_str = String::new();
+    while let Some(&ch) = chars.peek() {
+        match ch {
+            '0'..='9' | '-' | '.' | 'e' | 'E' => {
+                num_str.push(ch);
+                chars.next();
+            }
+            _ => break,
+        }
+    }
+    num_str.parse().ok().map(JsonValue::Number)
 }
