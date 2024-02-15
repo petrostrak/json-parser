@@ -67,3 +67,15 @@ fn parse_bool(chars: &mut Peekable<std::str::Chars>) -> Option<JsonValue> {
     };
     Some(JsonValue::Bool(value))
 }
+
+fn parse_string(chars: &mut Peekable<std::str::Chars>) -> Option<JsonValue> {
+    consume(chars, "\"")?;
+    let mut string = String::new();
+    while let Some(ch) = chars.next() {
+        match ch {
+            '"' => return Some(JsonValue::String(string)),
+            _ => string.push(ch),
+        }
+    }
+    None
+}
