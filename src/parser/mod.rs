@@ -98,3 +98,26 @@ fn parse_array(chars: &mut Peekable<std::str::Chars>) -> Option<JsonValue> {
     consume(chars, "]")?;
     Some(JsonValue::Array(array))
 }
+
+fn parse_object(chars: &mut Peekable<std::str::Chars>) -> Option<JsonValue> {
+    consume(chars, "{")?;
+    let mut object = HashMap::new();
+
+    loop {
+        if let Some(JsonValue::String(key)) = parse_string(chars) {
+            consume(chars, ":")?;
+            if let Some(value) = parse_value(chars) {
+                object.insert(key, value);
+                if consume(chars, ",").is_none() {
+                    break;
+                }
+            } else {
+                return None;
+            }
+        } else {
+            break;
+        }
+    }
+    consume(chars, "}")?;
+    Some(JsonValue::Object(object))
+}
