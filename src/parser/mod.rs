@@ -79,3 +79,22 @@ fn parse_string(chars: &mut Peekable<std::str::Chars>) -> Option<JsonValue> {
     }
     None
 }
+
+fn parse_array(chars: &mut Peekable<std::str::Chars>) -> Option<JsonValue> {
+    consume(chars, "[")?;
+    let mut array = Vec::new();
+
+    loop {
+        match parse_value(chars) {
+            Some(value) => {
+                array.push(value);
+                if consume(chars, ",").is_none() {
+                    break;
+                }
+            }
+            None => return None,
+        }
+    }
+    consume(chars, "]")?;
+    Some(JsonValue::Array(array))
+}
