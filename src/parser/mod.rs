@@ -1,10 +1,12 @@
-use std::{collections::HashMap, iter::Peekable};
+use std::collections::HashMap;
+use std::iter::Peekable;
 
 pub struct LogParser<'a> {
     json_str: &'a str,
 }
 
-enum JsonValue {
+#[derive(Debug)]
+pub enum JsonValue {
     Null,
     Bool(bool),
     Number(f64),
@@ -38,9 +40,9 @@ fn parse_value(chars: &mut Peekable<std::str::Chars>) -> Option<JsonValue> {
     }
 }
 
-fn consume(chars: &mut Peekable<std::str::Chars>, expected_str: &str) -> Option<String> {
+fn consume(chars: &mut Peekable<std::str::Chars>, expected: &str) -> Option<String> {
     let mut result = String::new();
-    for expected_ch in expected_str.chars() {
+    for expected_ch in expected.chars() {
         if let Some(ch) = chars.next() {
             if ch != expected_ch {
                 return None;
